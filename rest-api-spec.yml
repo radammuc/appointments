@@ -1,0 +1,172 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Terminbuchung
+host: 127.0.0.1
+basePath: /
+tags:
+  - name: termine
+    description: Termine von Kunden mit der Werkstatt
+paths:
+  '/werkstatt/{werkstattId}/termin':
+    post:
+      tags:
+        - termine
+      summary: Neuen Termin erstellen
+      operationId: postTermin
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: werkstattId
+          description: Die Kennung der Werkstatt
+          required: true
+          in: path
+          type: string
+        - name: termin
+          in: body
+          description: Der neue Termin
+          required: true
+          schema:
+            $ref: '#/definitions/terminRequest'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/termin'
+        '409':
+          description: Conflict
+  '/werkstatt/{werkstattId}/termin/{terminId}':
+    get:
+      tags:
+        - termine
+      summary: Termin abrufen
+      operationId: getTermin
+      produces:
+        - application/json
+      parameters:
+        - name: werkstattId
+          description: Die Kennung der Werkstatt
+          required: true
+          in: path
+          type: string
+        - name: terminId
+          description: Die Id des Termines
+          required: true
+          in: path
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/termin'
+        '404':
+          description: Not Found
+  '/werkstatt/{werkstattId}/termine':
+    get:
+      tags:
+        - termine
+      summary: Eine Liste aller Termine mit der Werkstatt
+      operationId: getTermine
+      parameters:
+        - name: werkstattId
+          description: Die Kennung der Werkstatt
+          required: true
+          in: path
+          type: string
+        - name: von
+          description: Nur Termine nach diesem Datum
+          required: false
+          in: query
+          type: string
+        - name: bis
+          description: Nur Termine vor diesem Datum
+          required: false
+          in: query
+          type: string
+        - name: leistungsId
+          description: Nur Termine dieser Leistung
+          required: false
+          in: query
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Eine Terminliste
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/termin'
+  '/werkstatt/{werkstattId}/terminvorschlag/':
+    get:
+        tags:
+          - terminvorschläge
+        summary: Terminvorschläge erhalten
+        operationId: getTerminvorschlaege
+        parameters:
+          - name: werkstattId
+            description: Die Kennung der Werkstatt
+            required: true
+            in: path
+            type: string
+          - name: leistungsId
+            description: Terminvorschläge für diese Leistung geben
+            required: true
+            in: query
+            type: string
+          - name: von
+            description: Mögliche Termine nach diesem Datum
+            required: false
+            in: query
+            type: string
+          - name: bis
+            description: Mögliche Termine vor diesem Datum
+            required: false
+            in: query
+            type: string
+        produces:
+        - application/json
+        responses:
+          '200':
+            description: Eine Liste an möglichen Terminen
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/termin'
+definitions:
+  termin:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Eindeutige Id des Termins
+      von:
+        type: string
+        description: Termin beginn
+      bis:
+        type: string
+        description: Termin ende
+      werkstattName:
+        type: string
+        description: Name der Werkstatt
+      leistung:
+        type: string
+        description: Beschreibung der Leistung
+      leistungsId:
+        type: string
+        description: Id der Leistung
+        
+  terminRequest:
+    type: object
+    properties:
+       von:
+        type: string
+        description: Termin beginn
+       bis:
+        type: string
+        description: Termin ende
+       leistungsId:
+        type: string
+        description: Id der Leistung
